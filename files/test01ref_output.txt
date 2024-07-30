@@ -1,0 +1,2 @@
+ls: cannot access '.grip': No such file or directory
+grip-init: error: .grip already exists
