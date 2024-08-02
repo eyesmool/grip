@@ -1,5 +1,7 @@
 #!/usr/bin/env dash
 
+# Tests for `init`
+
 SCRIPT_DIR=$(dirname "$0")
 . "$SCRIPT_DIR/testHelper.sh"
 
@@ -18,41 +20,32 @@ test01() {
 
    cat $output
 }
-
+# Tests all of subset 0
 test02() {
     setOutput "$program" test02
-    echo $init 
-    echo $add
-    echo $commit
     {
         $init;
         echo line 1 > a;
         echo hello world >b;
         $add a b
         $commit -m 'first commit'
-
-
+        echo  line 2 >>a
+        $add a
+        $commit -m 'second commit'
+        $log
+        echo line 3 >>a
+        $add a
+        echo line 4 >>a
+        $show 0:a
+        $show 1:a
+        $show :a
+        cat a
+        $show 0:b
+        $show 1:b
     } 2>> "$output"
 
     removeTestFiles a b
 }
 tests="test01 test02"
 
-for test in $tests; do
-    echo "${pink_colour}"
-    echo "----------------------------------------"
-    echo "////////////////////////////////////////"
-    echo "//////            $test           //////"
-    echo "////////////////////////////////////////"
-    echo "----------------------------------------"
-    echo "${reset_colour}"
-    for program in "$IMPLEMENTATION" "$REFERENCE"; do
-        clear
-        echo "${orange_colour}Running $program${reset_colour}"
-        $test "$program" "$args"
-    done
-        compareOutputs "$test""_imp_output.txt" "$test""_ref_output.txt"
-        removeTestFiles "$test""_imp_output.txt" "$test""_ref_output.txt"
-done
-
-clear
+runTests "$tests"

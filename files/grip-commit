@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+import os
+from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPreviousCommit, updateCommitTracker
+
+commitsDir = '.grip/.commits'
+firstCommit = os.path.join(commitsDir, '0')
+
+if isDirectoryEmpty(commitsDir):
+    os.mkdir(firstCommit)
+    with open('.grip/.commits/commitTracker', 'w') as file:
+        file.write("0")
+    copyIndexToCommit(0)
+    print("Committed as commit 0")
+    updateCommitTracker(1)
+else:
+    currCommit = getCurrCommitNum()
+    nextCommit = currCommit + 1
+    successiveCommitDir = os.path.join(commitsDir, str(f'{nextCommit}'))
+    os.mkdir(successiveCommitDir)
+    copyPreviousCommit(currCommit)
+    copyIndexToCommit(nextCommit)
+    print(f"Committed as commit {nextCommit}")
+    updateCommitTracker(nextCommit)

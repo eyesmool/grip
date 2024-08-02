@@ -1,0 +1,22 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+
+from utils import cat
+
+commitNumAndFile = sys.argv[1]
+parsedArg = commitNumAndFile.split(':')
+
+commitNum = parsedArg[0]
+file = parsedArg[1]
+
+indexPath = f'.grip/.index/{file}'
+
+if commitNum == '':
+    cat(indexPath)
+else:
+    commitPath = f'.grip/.commits/{commitNum}/{file}'
+    cat(commitPath)
+
+

@@ -2,10 +2,14 @@
 
 import os
 import sys
-directory = os.path.join(os.getcwd(), '.grip')
+directory = '.grip'
 
 if not os.path.exists(directory):
-    os.mkdir('.grip')
+    os.mkdir(directory)
+    indexDir = (os.path.join(directory,'.index'))
+    commitsDir = (os.path.join(directory,'.commits'))
+    os.mkdir(indexDir)
+    os.mkdir(commitsDir)
     print('Initialized empty grip repository in .grip')
 else:
     print('grip-init: error: .grip already exists',file=sys.stderr)

@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import shutil
+
+from utils import checkDotGripExist
+directory = '.grip'
+
+
+def addFileToIndex(file):
+     indexDir = os.path.join(directory, '.index')
+     shutil.copy(file, indexDir)
+
+def main():
+    checkDotGripExist()
+    if len(sys.argv) == 1:
+        print("usage: grip-add <filenames>", file=sys.stderr)
+
+    for file in sys.argv[1:]:
+        directory = os.path.join(os.getcwd(), f"{file}")
+        if not os.path.exists(directory):
+            print(f"grip-add: error: can not open '{file}'", file=sys.stderr)
+            sys.exit(1)
+        addFileToIndex(directory)
+
+if __name__ == "__main__":
+        main()
