@@ -1,32 +1,32 @@
 #!/usr/bin/env dash
 
-# Tests for commit
+# Tests for log
 
 SCRIPT_DIR=$(dirname "$0")
 . "$SCRIPT_DIR/testHelper.sh"
 
 chmod +x *
 
-# add, commit, no change, commit
-test3_1(){
+test4_1(){
     program=$1
     args=$2
-    setOutput "$program" test3_1
+    setOutput "$program" test4_1
    {
     $init
-    echo 1 > a
+    echo line 1 > a
+    echo hello world >b
+    $add a b
+    $commit -m 'first commit'
+    echo  line 2 >>a
     $add a
-    $commit -m message1
-    touch a
-    $add a
-    $commit -m message2
+    $commit -m 'second commit'
+    $log
    } > "$output" 2>&1
 
    cat $output
    removeTestFiles a
-    
 }
 
-tests="test3_1"
+tests="test4_1"
 
 runTests "$tests"

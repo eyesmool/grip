@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 import os
-from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPreviousCommit, updateCommitTracker
+import sys
+from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPreviousCommit, updateCommitTracker, updateLog, createLog, checkNothingToCommit
 
 commitsDir = '.grip/.commits'
 firstCommit = os.path.join(commitsDir, '0')
+message = sys.argv[2]
 
 if isDirectoryEmpty(commitsDir):
     os.mkdir(firstCommit)
@@ -12,13 +14,17 @@ if isDirectoryEmpty(commitsDir):
         file.write("0")
     copyIndexToCommit(0)
     print("Committed as commit 0")
-    updateCommitTracker(1)
+    updateCommitTracker(0)
+    createLog(message)
 else:
     currCommit = getCurrCommitNum()
     nextCommit = currCommit + 1
     successiveCommitDir = os.path.join(commitsDir, str(f'{nextCommit}'))
     os.mkdir(successiveCommitDir)
-    copyPreviousCommit(currCommit)
+    checkNothingToCommit()
+    if currCommit != 0:
+        copyPreviousCommit(currCommit)
     copyIndexToCommit(nextCommit)
     print(f"Committed as commit {nextCommit}")
     updateCommitTracker(nextCommit)
+    updateLog(nextCommit, message)

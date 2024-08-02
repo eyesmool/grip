@@ -3,6 +3,7 @@ import os
 import sys
 import shutil
 import subprocess
+import filecmp
 
 indexDir = '.grip/.index'
 commitDir = '.grip/.commits'
@@ -42,3 +43,48 @@ def copyPreviousCommit(currCommitNum):
 def updateCommitTracker(currCommit):
     with open('.grip/.commits/commitTracker', 'w') as file:
         file.write(str(currCommit))
+
+def createLog(message):
+    with open('.grip/log', 'w') as file:
+        log = str(0) + ' ' + message
+        file.write(log)
+
+def updateLog(commitNum, message):
+    with open('.grip/log', 'r') as file:
+        existingContent = file.read()
+    with open('.grip/log', 'w') as file:
+        log = str(commitNum) + ' ' + message + '\n'
+        file.write(log)
+        file.write(existingContent + "\n")
+
+def compareDirectories(dir1, dir2):
+    def doCompareDir(dcmp):
+        # Check if the lists of files and subdirectories are the same
+        if (dcmp.left_only or dcmp.right_only or
+            dcmp.diff_files or dcmp.funny_files):
+            return False
+
+        # Recursively check all subdirectories
+        for sub_dir in dcmp.common_dirs:
+            sub_dcmp = filecmp.dircmp(
+                os.path.join(dcmp.left, sub_dir),
+                os.path.join(dcmp.right, sub_dir)
+            )
+            if not doCompareDir(sub_dcmp):
+                return False
+
+        return True
+
+    # Initial comparison
+    initial_dcmp = filecmp.dircmp(dir1, dir2)
+    return doCompareDir(initial_dcmp)
+
+def checkNothingToCommit():
+    # if index is same as current commit throw error
+    currComitDir = os.path.join(commitDir, str(getCurrCommitNum()))
+    if compareDirectories(indexDir, currComitDir):
+        # then directories are the same
+        print("nothing to commit", file=sys.stderr)
+        sys.exit(1)
+
+    # if index is different to current commit return do nothing

@@ -14,7 +14,7 @@ test01() {
     setOutput "$program" test01
    {
     $add
-   } > "$output"
+   } > "$output" 2>&1
 
    cat $output
 }
@@ -27,7 +27,7 @@ test02() {
    {
     $init
     $add
-   } > "$output"
+   } > "$output" 2>&1
 
    cat $output
 }
@@ -40,7 +40,7 @@ test03() {
    {
     $init
     $add ligma.txt
-   } > "$output"
+   } > "$output" 2>&1
 
    cat $output
 }
@@ -53,7 +53,7 @@ test04() {
    {
     $init
     $add test.md 2 3
-   } 2> "$output"
+   } 2> "$output" 2>&1
 
    cat $output
 }

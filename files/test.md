@@ -24,6 +24,9 @@
 - [ ] grip-show: error: unknown commit '0'
 - [ ] no .grip folder
 - [ ] No args: `usage: grip-show <commit>:<filename>`
+- [x] grip-show: error: 'c' not found in index
+- [ x print(f"grip-show: error: '{file}' not found in commit {commitNum}", file=sys.stderr)
+- [ ] grip-show: error: unknown commit '2'
 ### Success
 - [x] add and show index 2_1
 - [ ] no commit num --> show index

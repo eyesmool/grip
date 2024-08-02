@@ -16,7 +16,7 @@ test01() {
     $init
     ls -d .grip;
     $init
-   } 2> "$output"
+   } 2> "$output" 2>&1
 
    cat $output
 }
@@ -42,7 +42,7 @@ test02() {
         cat a
         $show 0:b
         $show 1:b
-    } 2>> "$output"
+    } 2>> "$output" 2>&1
 
     removeTestFiles a b
 }

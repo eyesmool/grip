@@ -17,7 +17,7 @@ test2_1(){
     echo SHOW ME THE MONEY > a
     $add a
     $show :a
-   } > "$output"
+   } > "$output" 2>&1
 
    cat $output
    removeTestFiles a
@@ -37,7 +37,7 @@ test2_2(){
     # ls -aR .grip
     $show 0:a
     $show 0:b
-   } > "$output"
+   } > "$output" 2>&1
 
    cat $output
    removeTestFiles a
@@ -56,12 +56,31 @@ test2_3(){
     echo 3 > a
     $show 0:a
     $show :a
-   } > "$output"
+   } > "$output" 2>&1
+
+   cat $output
+   removeTestFiles a
+}
+# Tests show errors
+test2_4() {
+    program=$1
+    args=$2
+    setOutput "$program" test2_4
+   {
+    $init
+    echo line 1 > a
+    echo hello world > b
+    $add a b
+    $commit -m "first commit"
+    $show :c
+    $show 0:c
+    $show 2:a
+   } > "$output" 2>&1
 
    cat $output
    removeTestFiles a
 }
 
-tests="test2_1 test2_2 test2_3"
+tests="test2_1 test2_2 test2_3 test2_4"
 
 runTests "$tests"

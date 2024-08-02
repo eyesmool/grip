@@ -2,6 +2,7 @@
 
 import sys
 import re
+import os
 
 from utils import cat
 
@@ -14,9 +15,19 @@ file = parsedArg[1]
 indexPath = f'.grip/.index/{file}'
 
 if commitNum == '':
+    if not os.path.exists(indexPath):
+        print(f"grip-show: error: '{file}' not found in index", file=sys.stderr)
+        sys.exit(1)
     cat(indexPath)
 else:
-    commitPath = f'.grip/.commits/{commitNum}/{file}'
-    cat(commitPath)
+    commitPath = f'.grip/.commits/{commitNum}'
+    filePath = f'.grip/.commits/{commitNum}/{file}'
+    if not os.path.exists(commitPath):
+        print(f"grip-show: error: unknown commit '{commitNum}'")
+        sys.exit(1)
+    if not os.path.exists(filePath):
+        print(f"grip-show: error: '{file}' not found in commit {commitNum}", file=sys.stderr)
+        sys.exit(1)
+    cat(filePath)
 
 

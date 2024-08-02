@@ -6,7 +6,7 @@ chmod +x *
 
 for i in $(seq 0 5); do
     echo "${pink_colour} Running test$i.sh${reset_colour}"
-    "./test$i.sh" > /dev/null
+    "./test$i.sh" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo "${green_colour}Test$i.sh Passed${reset_colour}"
     else
