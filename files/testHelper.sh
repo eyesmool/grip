@@ -88,7 +88,9 @@ runTests() {
     testCount=0
     testFailed=0
     testPass=0
-    mkdir tests
+    if [ ! -d tests ]; then
+        mkdir tests
+    fi
     for test in $tests; do
         echo "${pink_colour}"
         echo "----------------------------------------"

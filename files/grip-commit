@@ -29,12 +29,16 @@ def commitAll(message):
     commit(message)
 
 def main():
+    if len(sys.argv) < 3:
+        print("usage: grip-commit [-a] -m commit-message",file=sys.stderr)
+        sys.exit(1)
+
     parser = argparse.ArgumentParser(
         description="Grip implementation of git-commit"
     )
 
-    parser.add_argument('--all', '-a', action='store_true', help='Enable option A')
-    parser.add_argument('--message', '-m')
+    parser.add_argument('--all', '-a', action='store_true')
+    parser.add_argument('--message', '-m', required=True)
 
     args = parser.parse_args()
 

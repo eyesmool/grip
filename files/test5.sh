@@ -141,7 +141,7 @@ test5_4() {
    removeTestFiles a b c d e
 }
 
-for i in $(seq 4 4); do
+for i in $(seq 1 4); do
     tests="$tests test5_$i"
 done
 runTests "$tests"

@@ -152,7 +152,7 @@ test6_4(){
 
 
 
-for i in $(seq 4 4); do
+for i in $(seq 1 4); do
     tests="$tests test6_$i"
 done
 runTests "$tests"

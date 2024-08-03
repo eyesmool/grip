@@ -2,24 +2,25 @@
 
 # Subset 0
 ## `git-init`
-- [ ] grip-init should create a directory named .grip, which it will use to store the repository.
-- [ ] It should produce an error message if this directory already exists, or cannot be created.
+- [x] grip-init should create a directory named .grip, which it will use to store the repository.
+- [x] It should produce an error message if this directory already exists, or cannot be created.
 
 ## `git-add`
 ### Error
-- [ ] invalid filenames
+- [x] invalid filenames
 - [x] add with no previous init
-- [ ] add with non-existent file
-- [ ] "usage: grip-add <filenames>"
-- [ ] test add with non-existent files (all don't exist)
-- [ ] test add with non-existent files (all don't exist)
-- [ ] test add with some exist and some don't exist
+- [x] add with non-existent file
+- [x] "usage: grip-add <filenames>"
+- [x] test add with non-existent files (all don't exist)
+- [x] test add with non-existent files (all don't exist)
+- [x] test add with some exist and some don't exist
 
 ## `git-commit`
-- [ ] no commit message
-- [ ] double commit
+- [x] no commit message
+- [x] double commit
 - [ ] commit without adding any files
 - [x] Test subset1_14 (add + commit -a) 
+- [ ] usage
 
 ## `grip-show`
 ### Error
@@ -29,6 +30,8 @@
 - [x] grip-show: error: 'c' not found in index
 - [x] print(f"grip-show: error: '{file}' not found in commit {commitNum}", file=sys.stderr)
 - [ ] `grip-show: error: unknown commit '2'`
+- [ ] usage
+- [ ] 
 ### Success
 - [x] add and show index 2_1
 - [ ] no commit num --> show index
@@ -37,3 +40,5 @@
 ## `grip-rm`
 ### success
 - [x] autotest subset0_15
+- [ ] usage
+- [ ] 
