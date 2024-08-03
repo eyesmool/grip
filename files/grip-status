@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import filecmp
+
+from utils import getCurrCommitDir
+
+indexDir = '.grip/.index'
+
+def isUntracked(file):
+    if not os.path.exists(os.path.join(indexDir, file)):
+        return True
+    return False
+
+
+def isSameAsRepo(file):
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    currFilePath = os.path.join(os.getcwd(), file)
+    if os.path.exists(committedFilePath):
+        return filecmp.cmp(committedFilePath, currFilePath)
+
+
+def areChangesStaged(file):
+    indexFilePath = os.path.join(indexDir, file)
+    currFilePath = os.path.join(os.getcwd(), file)
+    if os.path.exists(indexFilePath):
+        return filecmp.cmp(indexFilePath, currFilePath)
+
+def isfileChanged(file):
+    # file is changed if CWD is different to currCommit or doesn't exist on currCommit
+    currFilePath = os.path.join(os.getcwd(), file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if not os.path.exists(committedFilePath):
+        return True
+    if not filecmp.cmp(currFilePath, committedFilePath):
+        return True
+
+def isDeletedFromIndexAndCWD(file):
+    currFilePath = os.path.join(os.getcwd(), file)
+    indexFilePath = os.path.join(indexDir, file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if os.path.exists(committedFilePath) and not os.path.exists(indexFilePath) and not os.path.exists(currFilePath):
+            return True
+
+def isFileDeletedFromIndex(file):
+    indexFilePath = os.path.join(indexDir, file)
+    currFilePath = os.path.join(os.getcwd(), file)
+    if not os.path.exists(indexFilePath) and os.path.exists(currFilePath):
+            return True
+    
+def isDeleted(file):
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    currFilePath = os.path.join(os.getcwd(), file)
+    if os.path.exists(committedFilePath) and not os.path.exists(currFilePath):
+        return True
+    return False
+
+def isAddedToIndex(file):
+    # if added to index so not in commit
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    indexFilePath = os.path.join(indexDir, file)
+    if not os.path.exists(committedFilePath):
+        if os.path.exists(indexFilePath):
+            return True
+        
+def isAddedToIndexChanged(file):
+    currFilePath = os.path.join(os.getcwd(), file)
+    indexFilePath = os.path.join(indexDir, file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if not os.path.exists(committedFilePath):
+        if os.path.exists(indexFilePath) and not filecmp.cmp(currFilePath, indexFilePath):
+            return True
+
+def isAddedToIndexDeleted(file):
+    currFilePath = os.path.join(os.getcwd(), file)
+    indexFilePath = os.path.join(indexDir, file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if not os.path.exists(committedFilePath):
+        if os.path.exists(indexFilePath) and not os.path.exists(currFilePath):
+            return True
+
+def areChangesStaged(file):
+    indexFilePath = os.path.join(indexDir, file)
+    currFilePath = os.path.join(os.getcwd(), file)
+    if os.path.exists(indexFilePath):
+        return filecmp.cmp(indexFilePath, currFilePath)
+
+def isCommittable(file):
+    indexFilePath = os.path.join(indexDir, file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if os.path.exists(indexFilePath):
+        if not os.path.exists(committedFilePath):
+            return True
+        if not filecmp.cmp(indexFilePath, committedFilePath):
+            return True
+    return False
+def areDifferentChangesStaged(file):
+    currFilePath = os.path.join(os.getcwd(), file)
+    indexFilePath = os.path.join(indexDir, file)
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    if isCommittable(file):
+        if not filecmp.cmp(currFilePath, indexFilePath):
+            return True
+    return False
+
+
+def main():
+    dict = {}
+    for item in sorted(os.listdir(os.getcwd())):
+        if os.path.isfile(item):
+            if isUntracked(item):
+                dict[item] = 'untracked'
+            elif isSameAsRepo(item):
+                dict[item] = 'same as repo'
+            elif isAddedToIndexChanged(item):
+                dict[item] = 'added to index, file changed'
+            elif isAddedToIndex(item):
+                dict[item] = 'added to index'
+            elif areDifferentChangesStaged(item):
+                dict[item] = 'file changed, different changes staged for commit'
+            elif areChangesStaged(item):
+                dict[item] = 'file changed, changes staged for commit'
+            else:
+                dict[item] = 'file changed, changes not staged for commit'
+
+
+    # get status of deleted files
+    for item in sorted(os.listdir(getCurrCommitDir())):
+        if isDeletedFromIndexAndCWD(item):
+            dict[item] = 'file deleted, deleted from index'
+        elif isDeleted(item):
+            dict[item] = 'file deleted'
+        elif isFileDeletedFromIndex(item):
+            dict[item] = 'deleted from index'
+    
+    # get status of deleted added items
+    for item in sorted(os.listdir(indexDir)):
+        if isAddedToIndexDeleted(item):
+                dict[item] = 'added to index, file deleted'
+
+    # print out the status
+    for key, value in sorted(dict.items()):
+        print(f"{key} - {value}")
+
+
+if __name__ == "__main__":
+    main()

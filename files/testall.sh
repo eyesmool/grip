@@ -4,7 +4,7 @@ SCRIPT_DIR=$(dirname "$0")
 
 chmod +x *
 
-for i in $(seq 0 5); do
+for i in $(seq 0 6); do
     echo "${pink_colour} Running test$i.sh${reset_colour}"
     "./test$i.sh" > /dev/null 2>&1
     if [ $? -eq 0 ]; then

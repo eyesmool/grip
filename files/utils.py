@@ -31,9 +31,18 @@ def getCurrCommitNum():
 def getCurrCommitDir():
     return os.path.join(commitDir, str(getCurrCommitNum()))
 
+def getPrevCommitDir():
+    return os.path.join(commitDir, str(getCurrCommitNum() - 1))
+
 def cat(filePath):
-    cat = subprocess.run(['cat', filePath], capture_output=True, text=True, check=True)
-    print(cat.stdout, end="")
+    try:
+        with open(filePath, 'r') as file:
+            content = file.read()
+            print(content, end="")
+    except FileNotFoundError:
+        print(f"Error: File '{filePath}' not found.")
+    except IOError as e:
+        print(f"Error reading file '{filePath}': {e}")
 
 def copyPreviousCommit(currCommitNum):
     prevCommitNum = currCommitNum - 1

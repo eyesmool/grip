@@ -1,6 +1,6 @@
 #!/usr/bin/env dash
 
-# Tests forrm
+# Tests for rm
 
 SCRIPT_DIR=$(dirname "$0")
 . "$SCRIPT_DIR/testHelper.sh"

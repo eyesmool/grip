@@ -22,22 +22,24 @@ clear() {
 setOutput() {
     program=$1
     test=$2
-    if [ "$program" = "$IMPLEMENTATION" ]; then
-        output="$test""_imp_output.txt"
+    if [ "$program" = "$REFERENCE" ]; then
+        output="tests/$test""_imp_output.txt"
         init="2041 grip-init"
         add="2041 grip-add"
         commit="2041 grip-commit"
         log="2041 grip-log"
         show="2041 grip-show"
         rm="2041 grip-rm"
-    elif [ "$program" = "$REFERENCE" ]; then
-        output="$test""_ref_output.txt"
+        status="2041 grip-status"
+    elif [ "$program" = "$IMPLEMENTATION" ]; then
+        output="tests/$test""_ref_output.txt"
         init="./grip-init"
         add="./grip-add"
         commit="./grip-commit"
         log="./grip-log"
         show="./grip-show"
         rm="./grip-rm"
+        status="./grip-status"
     fi
 }
 
@@ -86,26 +88,27 @@ runTests() {
     testCount=0
     testFailed=0
     testPass=0
+    mkdir tests
     for test in $tests; do
-    echo "${pink_colour}"
-    echo "----------------------------------------"
-    echo "////////////////////////////////////////"
-    echo "//////            $test           //////"
-    echo "////////////////////////////////////////"
-    echo "----------------------------------------"
-    echo "${reset_colour}"
-    for program in "$IMPLEMENTATION" "$REFERENCE"; do
+        echo "${pink_colour}"
+        echo "----------------------------------------"
+        echo "////////////////////////////////////////"
+        echo "//////            $test           //////"
+        echo "////////////////////////////////////////"
+        echo "----------------------------------------"
+        echo "${reset_colour}"
+    for program in "$REFERENCE" "$IMPLEMENTATION"; do
         clear
         echo "${orange_colour}Running $program${reset_colour}"
         $test "$program" "$args"
     done
-        compareOutputs "$test""_imp_output.txt" "$test""_ref_output.txt"
+        compareOutputs "tests/$test""_imp_output.txt" "tests/$test""_ref_output.txt"
+        removeTestFiles "tests/$test""_imp_output.txt" "tests/$test""_ref_output.txt"
         if [ $? -eq 0 ]; then
             testPass=$((testPass + 1))
         else
             testFailed=$((testFailed + 1))
         fi
-        removeTestFiles "$test""_imp_output.txt" "$test""_ref_output.txt"
     testCount=$((testCount + 1))
     done
 

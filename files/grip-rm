@@ -4,7 +4,13 @@ import os
 import sys
 import argparse
 
-from utils import removeFileFromIndex, removeFileFromCWD, rmChecks, rmChecksCache
+from utils import removeFileFromIndex, removeFileFromCWD, rmChecks, rmChecksCache, getPrevCommitDir
+
+def removeFromPrevCommit(file):
+    prevCommitDir = getPrevCommitDir()
+    filePrevCommitPath = os.path.join(prevCommitDir, file)
+    if (os.path.exists(filePrevCommitPath)):
+        os.remove(filePrevCommitPath)
 
 def main():
     parser = argparse.ArgumentParser(
@@ -17,21 +23,29 @@ def main():
 
     args = parser.parse_args()
 
-    if args.cached:
+    if args.force and args.cached:
+        for file in args.filenames:
+            removeFileFromIndex(file)
+            removeFromPrevCommit(file)
+
+    elif args.cached:
         for file in args.filenames:
             rmChecksCache(file)
             removeFileFromIndex(file)
+            removeFromPrevCommit(file)
+
     elif args.force:
         for file in args.filenames:
             removeFileFromIndex(file)
             removeFileFromCWD(file)
+            removeFromPrevCommit(file)
+
     else:
         for file in args.filenames:
             rmChecks(file)
             removeFileFromIndex(file)
             removeFileFromCWD(file)
-
-
+            removeFromPrevCommit(file)
 
 
 if __name__ == "__main__":
