@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import argparse
+
+from utils import removeFileFromIndex, removeFileFromCWD, rmChecks, rmChecksCache
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Grip implementation of git-rm"
+    )
+
+    parser.add_argument('--force', action='store_true')
+    parser.add_argument('--cached', action='store_true')
+    parser.add_argument('filenames', nargs='+')
+
+    args = parser.parse_args()
+
+    if args.cached:
+        for file in args.filenames:
+            rmChecksCache(file)
+            removeFileFromIndex(file)
+    elif args.force:
+        for file in args.filenames:
+            removeFileFromIndex(file)
+            removeFileFromCWD(file)
+    else:
+        for file in args.filenames:
+            rmChecks(file)
+            removeFileFromIndex(file)
+            removeFileFromCWD(file)
+
+
+
+
+if __name__ == "__main__":
+    main()

@@ -28,6 +28,9 @@ def getCurrCommitNum():
     with open('.grip/.commits/commitTracker', 'r') as file:
         return int(file.read())
 
+def getCurrCommitDir():
+    return os.path.join(commitDir, str(getCurrCommitNum()))
+
 def cat(filePath):
     cat = subprocess.run(['cat', filePath], capture_output=True, text=True, check=True)
     print(cat.stdout, end="")
@@ -38,7 +41,9 @@ def copyPreviousCommit(currCommitNum):
     currCommitDir = os.path.join(commitDir, str(currCommitNum))
     for item in os.listdir(previousCommitDir):
         srcPath = os.path.join(previousCommitDir, item)
-        shutil.copy(srcPath, currCommitDir)
+        if os.path.exists(os.path.join(indexDir, item)):
+            # if exists in index then copy over
+            shutil.copy(srcPath, currCommitDir)
 
 def updateCommitTracker(currCommit):
     with open('.grip/.commits/commitTracker', 'w') as file:
@@ -88,3 +93,75 @@ def checkNothingToCommit():
         sys.exit(1)
 
     # if index is different to current commit return do nothing
+
+def addFileToIndex(file):
+    directory = '.grip'
+    indexDir = os.path.join(directory, '.index')
+    try:
+        shutil.copy(file, indexDir)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def removeFileFromIndex(file):
+    filePath = os.path.join(indexDir, str(file))
+    if not os.path.exists(filePath):
+       print(f"grip-rm: error: '{file}' is not in the grip repository",file=sys.stderr)
+       sys.exit(1)
+    try:
+        os.remove(filePath)
+    except FileNotFoundError:
+        print(f"File {filePath} does not exist.")
+    except PermissionError:
+        print(f"Permission denied to delete {filePath}.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def removeFileFromCWD(file):
+    filePath = os.path.join(os.getcwd(), str(file))
+    try:
+        os.remove(filePath)
+    except FileNotFoundError:
+        print(f"File {filePath} does not exist.")
+    except PermissionError:
+        print(f"Permission denied to delete {filePath}.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+
+def rmChecks(file):
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    filePathCWD = os.path.join(os.getcwd(), file)
+    fileIndexPath = os.path.join(indexDir, file)
+    if not os.path.exists(os.path.join(indexDir, str(file))):
+        # then file doesn't exist in index
+       print(f"grip-rm: error: '{file}' is not in the grip repository",file=sys.stderr)
+       sys.exit(1)
+    if not filecmp.cmp(fileIndexPath, filePathCWD, shallow=False) and not filecmp.cmp(fileIndexPath, committedFilePath, shallow=False):
+        # then file in index is different to both the working file and the repository
+        print(f"grip-rm: error: '{file}' in index is different to both the working file and the repository",file=sys.stderr)
+        sys.exit(1)
+    if not os.path.exists(committedFilePath):
+        # then file has staged changes in the index
+        print(f"grip-rm: error: '{file}' has staged changes in the index",file=sys.stderr)
+        sys.exit(1)
+    if not filecmp.cmp(fileIndexPath, committedFilePath, shallow=False):
+        # then file has staged changes in the index
+        print(f"grip-rm: error: '{file}' has staged changes in the index",file=sys.stderr)
+        sys.exit(1)
+    if not filecmp.cmp(committedFilePath, filePathCWD, shallow=False):
+        # then file in the repository is different to the working file
+        print(f"grip-rm: error: '{file}' in the repository is different to the working file",file=sys.stderr)
+        sys.exit(1)
+
+def rmChecksCache(file):
+    committedFilePath = os.path.join(getCurrCommitDir(), file)
+    filePathCWD = os.path.join(os.getcwd(), file)
+    fileIndexPath = os.path.join(indexDir, file)
+    if not os.path.exists(os.path.join(indexDir, str(file))):
+        # then file doesn't exist in index
+       print(f"grip-rm: error: '{file}' is not in the grip repository",file=sys.stderr)
+       sys.exit(1)
+    if not filecmp.cmp(fileIndexPath, filePathCWD, shallow=False) and not filecmp.cmp(fileIndexPath, committedFilePath, shallow=False):
+        # then file in index is different to both the working file and the repository
+        print(f"grip-rm: error: '{file}' in index is different to both the working file and the repository",file=sys.stderr)
+        sys.exit(1)

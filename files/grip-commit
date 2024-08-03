@@ -2,29 +2,59 @@
 
 import os
 import sys
-from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPreviousCommit, updateCommitTracker, updateLog, createLog, checkNothingToCommit
-
+import argparse
+from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPreviousCommit, updateCommitTracker, updateLog, createLog, checkNothingToCommit, addFileToIndex
 commitsDir = '.grip/.commits'
-firstCommit = os.path.join(commitsDir, '0')
-message = sys.argv[2]
 
-if isDirectoryEmpty(commitsDir):
-    os.mkdir(firstCommit)
-    with open('.grip/.commits/commitTracker', 'w') as file:
-        file.write("0")
-    copyIndexToCommit(0)
-    print("Committed as commit 0")
-    updateCommitTracker(0)
-    createLog(message)
-else:
+
+def commit(message):
+    checkNothingToCommit()
     currCommit = getCurrCommitNum()
     nextCommit = currCommit + 1
     successiveCommitDir = os.path.join(commitsDir, str(f'{nextCommit}'))
     os.mkdir(successiveCommitDir)
-    checkNothingToCommit()
     if currCommit != 0:
         copyPreviousCommit(currCommit)
     copyIndexToCommit(nextCommit)
     print(f"Committed as commit {nextCommit}")
     updateCommitTracker(nextCommit)
     updateLog(nextCommit, message)
+
+def commitAll(message):
+    # Loop through index
+    for indexedFile in os.listdir('.grip/.index'):
+        # If file in index is in CWD, copy to index
+        if indexedFile in os.listdir(os.getcwd()):
+            addFileToIndex(indexedFile)
+    commit(message)
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Grip implementation of git-commit"
+    )
+
+    parser.add_argument('--all', '-a', action='store_true', help='Enable option A')
+    parser.add_argument('--message', '-m')
+
+    args = parser.parse_args()
+
+    firstCommit = os.path.join(commitsDir, '0')
+    message = args.message
+
+
+    if isDirectoryEmpty(commitsDir):
+        os.mkdir(firstCommit)
+        with open('.grip/.commits/commitTracker', 'w') as file:
+            file.write("0")
+        copyIndexToCommit(0)
+        print("Committed as commit 0")
+        updateCommitTracker(0)
+        createLog(message)
+    elif args.all:
+        commitAll(message)
+    else:
+       commit(message)
+
+
+if __name__ == "__main__":
+        main()

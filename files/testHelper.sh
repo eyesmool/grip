@@ -29,6 +29,7 @@ setOutput() {
         commit="2041 grip-commit"
         log="2041 grip-log"
         show="2041 grip-show"
+        rm="2041 grip-rm"
     elif [ "$program" = "$REFERENCE" ]; then
         output="$test""_ref_output.txt"
         init="./grip-init"
@@ -36,6 +37,7 @@ setOutput() {
         commit="./grip-commit"
         log="./grip-log"
         show="./grip-show"
+        rm="./grip-rm"
     fi
 }
 
