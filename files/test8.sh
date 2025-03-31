@@ -52,9 +52,20 @@ test8_3(){
    removeTestFiles a b c d
 }
 
+test8_4(){
+    program=$1
+    args=$2
+    setOutput "$program" test8_4
+   {
+    $commit -m melanin
+   } > "$output" 2>&1
+
+   cat $output
+   removeTestFiles a b c d
+}
 
 
-for i in $(seq 1 3); do
+for i in $(seq 1 4); do
     tests="$tests test8_$i"
 done
 runTests "$tests"

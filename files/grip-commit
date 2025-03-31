@@ -7,6 +7,7 @@ from utils import isDirectoryEmpty, copyIndexToCommit, getCurrCommitNum, copyPre
 commitsDir = '.grip/.commits'
 
 
+
 def commit(message):
     checkNothingToCommit()
     currCommit = getCurrCommitNum()
@@ -31,6 +32,10 @@ def commitAll(message):
 def main():
     if len(sys.argv) < 3:
         print("usage: grip-commit [-a] -m commit-message",file=sys.stderr)
+        sys.exit(1)
+
+    if not os.path.exists('.grip'):
+        print("grip-show: error: grip repository directory .grip not found", file=sys.stderr)
         sys.exit(1)
 
     parser = argparse.ArgumentParser(

@@ -14,17 +14,17 @@
 - [x] test add with non-existent files (all don't exist)
 - [x] test add with non-existent files (all don't exist)
 - [x] test add with some exist and some don't exist
+- [ ] no grip
 
 ## `git-commit`
 - [x] no commit message
 - [x] double commit
-- [ ] commit without adding any files
+- [x] commit without adding any files
 - [x] Test subset1_14 (add + commit -a) 
-- [ ] usage
 
 ## `grip-show`
 ### Error
-- [ ] grip-show: error: unknown commit '0'
+- [x] grip-show: error: unknown commit '0'
 - [ ] no .grip folder
 - [ ] No args: `usage: grip-show <commit>:<filename>`
 - [x] grip-show: error: 'c' not found in index

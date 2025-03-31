@@ -6,6 +6,10 @@ import os
 
 from utils import cat
 
+if not os.path.exists('.grip'):
+    print("grip-show: error: grip repository directory .grip not found", file=sys.stderr)
+    sys.exit(1)
+
 commitNumAndFile = sys.argv[1]
 parsedArg = commitNumAndFile.split(':')
 
